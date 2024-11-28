@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja Shop Vasco</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .header {
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #000;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            margin-bottom: 20px;
+        }
+
+        .product-card .card-body {
+            padding: 15px;
+            background-color: #222;
+            border-radius: 8px;
+        }
+
+        .card-title, .card-text {
+            color: #fff;
+        }
+
+        .card-body .btn-outline-secondary {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .card-body .btn-outline-secondary:hover {
+            background-color: #444;
+        }
+
+        .card-body .btn-primary {
+            background-color: #444;
+            border-color: #444;
+        }
+
+        .card-body .btn-primary:hover {
+            background-color: #555;
+        }
+
+        /* Estilo para o carrinho lateral */
+        #cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px; /* Começa oculto */
+            width: 300px;
+            height: 100%;
+            background-color: #222;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+            transition: right 0.5s ease-out;
+            z-index: 999;
+            padding: 20px;
+        }
+
+        #cart-sidebar.open {
+            right: 0;
+        }
+
+        #cart-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #000;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 50%;
+            font-size: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 999;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #444;
+        }
+
+        .cart-item img {
+            width: 50px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .modal-content {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #444;
+        }
+
+        .size-option {
+            color: #fff;
+            background-color: #444;
+            border: 1px solid #555;
+            margin: 5px;
+        }
+
+        .size-option:hover {
+            background-color: #555;
+        }
+
+        /* Tela de Finalização de Compra */
+        #checkout-modal {
+            background-color: rgba(0, 0, 0, 0.7);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .checkout-content {
+            background-color: #222;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .checkout-content h2 {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        .checkout-content p {
+            font-size: 18px;
+        }
+
+        .checkout-content .btn {
+            background-color: #444;
+            border-color: #444;
+        }
+
+        .checkout-content .btn:hover {
+            background-color: #555;
+        }
+
+        /* Responsividade para dispositivos móveis */
+        @media (max-width: 768px) {
+            #cart-btn {
+                font-size: 16px;
+                padding: 10px 16px;
+            }
+
+            .product-card .card-body {
+                padding: 10px;
+            }
+
+            .header {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cabeçalho da loja -->
+    <div class="header">
+        Shop Vasco
+    </div>
+
+    <div class="container mt-5">
+        <div id="product-list" class="row"></div>
+
+        <!-- Menu lateral do carrinho -->
+        <div id="cart-sidebar">
+            <h4>Carrinho</h4>
+            <div id="cart-items"></div>
+            <hr>
+            <div>
+                <strong>Total: R$ <span id="cart-total">0.00</span></strong>
+                <br>
+                <button class="btn btn-success mt-3" id="checkout-btn" onclick="checkout()">Finalizar Compra</button>
+            </div>
+        </div>
+
+        <!-- Botão de carrinho fixo -->
+        <div id="cart-btn" onclick="toggleCartSidebar()">🛒</div>
+    </div>
+
+    <!-- Modal de Tamanho -->
+    <div class="modal fade" id="sizeModal" tabindex="-1" aria-labelledby="sizeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sizeModalLabel">Escolha o Tamanho</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <button class="btn size-option" data-size="P" onclick="selectSize('P')">P</button>
+                    <button class="btn size-option" data-size="M" onclick="selectSize('M')">M</button>
+                    <button class="btn size-option" data-size="G" onclick="selectSize('G')">G</button>
+                    <button class="btn size-option" data-size="GG" onclick="selectSize('GG')">GG</button>
+                    <button class="btn btn-primary mt-3" id="add-to-cart-btn" onclick="addToCart()" style="display:none;">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Finalização de Compra -->
+    <div id="checkout-modal">
+        <div class="checkout-content">
+            <h2>Compra Finalizada!</h2>
+            <p>Obrigado por comprar na Shop Vasco. Sua compra foi realizada com sucesso.</p>
+            <button class="btn btn-success" onclick="goBackToStore()">Voltar à Loja</button>
+            <button class="btn btn-danger mt-2" onclick="closeCheckoutModal()">Fechar</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const products = [
+            { id: 1, name: 'Camisa Kappa Vasco I Juvenil 2024 Roberto Dinamite', price: 339.90, img: '1.webp' },
+            { id: 2, name: 'Camisa Vasco Oficial III 2023 Kappa Juvenil - Camisas Negras', price: 299.00, img: '2.webp' },
+            { id: 3, name: 'Camisa Vasco Oficial III 2023 Kappa Juvenil - Camisas Negras', price: 349.90, img: '3.webp' },
+            { id: 4, name: 'Camisa Vasco Oficial III 2024 - 100 anos Resposta Histórica Kappa Masculina Preta', price: 349.90, img: '4.webp' }
+        ];
+
+        let selectedProductId = null;
+        let selectedSize = null;
+        let cart = [];
+
+        // Função para carregar os produtos
+        function loadProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('col-md-3', 'product-card');
+                productCard.innerHTML = `
+                    <div class="card" style="background-color: #333;">
+                        <img src="${product.img}" class="card-img-top" alt="${product.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text">R$ ${product.price.toFixed(2)}</p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sizeModal" onclick="selectProduct(${product.id})">Escolher Tamanho</button>
+                        </div>
+                    </div>
+                `;
+                productList.appendChild(productCard);
+            });
+        }
+
+        // Selecionar produto
+        function selectProduct(productId) {
+            selectedProductId = productId;
+            document.getElementById('add-to-cart-btn').style.display = 'none';
+        }
+
+        // Selecionar tamanho
+        function selectSize(size) {
+            selectedSize = size;
+            document.getElementById('add-to-cart-btn').style.display = 'block';
+        }
+
+        // Adicionar item ao carrinho
+        function addToCart() {
+            if (selectedProductId && selectedSize) {
+                const product = products.find(p => p.id === selectedProductId);
+                cart.push({ product, size: selectedSize });
+                updateCart();
+                $('#sizeModal').modal('hide');
+            }
+        }
+
+        // Atualizar o carrinho
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            cartItems.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <img src="${item.product.img}" alt="${item.product.name}">
+                    <div>
+                        <strong>${item.product.name}</strong><br>
+                        Tamanho: ${item.size}<br>
+                        R$ ${item.product.price.toFixed(2)}
+                    </div>
+                `;
+                cartItems.appendChild(cartItem);
+                total += item.product.price;
+            });
+
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        // Exibir o carrinho
+        function toggleCartSidebar() {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            cartSidebar.classList.toggle('open');
+        }
+
+        // Finalizar compra
+        function checkout() {
+            $('#checkout-modal').show();
+        }
+
+        // Fechar a tela de checkout
+        function closeCheckoutModal() {
+            $('#checkout-modal').hide();
+        }
+
+        // Voltar à loja
+        function goBackToStore() {
+            cart = [];
+            updateCart();
+            closeCheckoutModal();
+        }
+
+        // Carregar os produtos na página
+        loadProducts();
+    </script>
+</body>
+</html>

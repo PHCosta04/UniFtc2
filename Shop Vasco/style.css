@@ -1,0 +1,112 @@
+/* Estilo para os produtos */
+.product-card {
+    margin-bottom: 20px;
+    background-color: #ffffff; /* Fundo branco para destacar o conteúdo */
+    border-radius: 10px;
+    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Campo de quantidade */
+.product-quantity {
+    width: 60px;
+    margin-right: 10px;
+    border: 1px solid #6c63ff; /* Roxo suave */
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Estilo do botão "Adicionar ao Carrinho" */
+.product-card button {
+    background-color: #6c63ff; /* Roxo principal */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.product-card button:hover {
+    background-color: #4b42cc; /* Roxo mais escuro no hover */
+    transform: scale(1.05); /* Leve aumento no hover */
+}
+
+/* Estilo da mensagem de feedback */
+.alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    max-width: 500px;
+    background-color: #6c63ff; /* Fundo roxo */
+    color: white; /* Texto branco */
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    text-align: center;
+}
+
+/* Efeito de sombra para os cards */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px); /* Efeito de elevação */
+}
+
+/* Estilo para o nome "Mercado Unex" */
+.header-title {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    position: relative;
+    color: white;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #6c63ff; /* Faixa roxa */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajuste para centralizar */
+.header-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Estilo dos botões de tamanho */
+.btn-group-toggle .btn {
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.size-option.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.size-option {
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.size-option:hover {
+    background-color: #007bff;
+    color: white;
+}
